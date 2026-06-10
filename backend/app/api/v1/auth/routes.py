@@ -30,6 +30,13 @@ from app.api.dependencies import (
 
 from app.models.user import User
 
+from app.api.permissions import (
+    require_role
+)
+
+from app.constants.roles import (
+    Roles
+)
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
@@ -123,4 +130,17 @@ def token_test(
         "message": "Token Valid",
         "email": current_user.email,
         "role": current_user.role
+    }
+
+@router.get("/admin-test")
+def admin_test(
+    current_user=Depends(
+        require_role(
+            [Roles.ADMIN]
+        )
+    )
+):
+
+    return {
+        "message": "Admin Access Granted"
     }
